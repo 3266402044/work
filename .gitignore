@@ -1,0 +1,10 @@
+node_modules/
+dist/
+target/
+uploads/
+.tools/
+.vite/
+.vscode/
+.idea/
+*.log
+backend/data/
