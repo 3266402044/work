@@ -18,7 +18,12 @@ let observer: ResizeObserver | null = null
 const init = () => {
   if (!el.value) return
   chart = echarts.init(el.value, undefined, { renderer: 'canvas' })
-  chart.setOption(props.option || {})
+  chart.setOption({
+    animation: true,
+    animationDuration: 600,
+    animationEasing: 'cubicOut',
+    ...(props.option || {})
+  })
 }
 
 const resize = () => chart?.resize()

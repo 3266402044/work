@@ -10,6 +10,11 @@ import './styles/main.css'
 import App from './App.vue'
 import router from './router'
 
+// 挂载前先应用持久化主题，避免浅色用户先闪一下深色
+const savedTheme = (localStorage.getItem('cp_theme') as 'dark' | 'light') || 'dark'
+document.documentElement.classList.toggle('dark', savedTheme === 'dark')
+document.documentElement.setAttribute('data-theme', savedTheme)
+
 const app = createApp(App)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component as never)

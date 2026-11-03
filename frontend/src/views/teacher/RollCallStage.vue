@@ -9,6 +9,7 @@ import type { ClassGroup, Course, RollCallVO, Student, TaskVO } from '@/types'
 import PageHeader from '@/components/PageHeader.vue'
 import StatusTag from '@/components/StatusTag.vue'
 import Countdown from '@/components/Countdown.vue'
+import Particles from '@/components/Particles.vue'
 
 const router = useRouter()
 const courses = ref<Course[]>([])
@@ -386,6 +387,7 @@ onBeforeUnmount(() => {
 
     <!-- 抽取舞台 -->
     <section v-if="session || phase === 'rolling'" class="stage">
+      <Particles :count="22" color="var(--cyan)" />
       <div class="stage-top">
         <div class="row" style="gap: 8px; flex-wrap: wrap">
           <span class="chip cyan">{{ session?.courseName || courses.find((c) => c.id === form.courseId)?.name }}</span>
@@ -520,7 +522,7 @@ onBeforeUnmount(() => {
   background:
     radial-gradient(circle at 18% 12%, rgba(56, 221, 248, 0.1), transparent 55%),
     radial-gradient(circle at 80% 84%, rgba(45, 212, 191, 0.08), transparent 52%),
-    #0A1120;
+    var(--stage-bg);
   min-height: 500px;
   display: flex;
   flex-direction: column;
@@ -539,7 +541,7 @@ onBeforeUnmount(() => {
 .stage-body { position: relative; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px 24px; min-height: 330px; }
 .rolling-label { font-size: 12px; letter-spacing: 0.16em; color: var(--cyan); margin-bottom: 26px; }
 .roll-names { display: flex; gap: 28px; flex-wrap: wrap; justify-content: center; }
-.stage-roll { animation: flicker 0.16s ease infinite alternate; }
+.stage-roll { animation: flicker 0.16s ease infinite alternate; text-shadow: 0 0 24px rgba(56, 221, 248, 0.4); }
 @keyframes flicker { from { opacity: 0.55; filter: blur(1px); } to { opacity: 1; filter: none; } }
 .rolling-hint { margin-top: 28px; font-size: 11px; color: var(--muted); }
 .idle-icon { font-size: 48px; color: rgba(56, 221, 248, 0.7); }
@@ -552,7 +554,7 @@ onBeforeUnmount(() => {
 .result-grid.count-2 { grid-template-columns: repeat(2, minmax(0, 320px)); }
 .result-grid.count-3 { grid-template-columns: repeat(3, minmax(0, 300px)); }
 .draw-card {
-  background: rgba(21, 28, 45, 0.82);
+  background: var(--glass-bg);
   border: 1px solid rgba(56, 221, 248, 0.22);
   border-radius: 12px;
   padding: 22px 16px 16px;

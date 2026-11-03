@@ -6,12 +6,14 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { taskApi } from '@/api'
 import { onRealtime } from '@/composables/realtime'
 import { formatDateTime, formatTime, methodLabel } from '@/utils/format'
+import { playNoticeTone } from '@/utils/sound'
 import type { TaskVO } from '@/types'
 import PageHeader from '@/components/PageHeader.vue'
 import StatusTag from '@/components/StatusTag.vue'
 import Countdown from '@/components/Countdown.vue'
 import ProgressRing from '@/components/ProgressRing.vue'
 import EmptyState from '@/components/EmptyState.vue'
+import Particles from '@/components/Particles.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -26,6 +28,7 @@ const tab = ref<'roster' | 'map'>('roster')
 const filter = ref('ALL')
 const keyword = ref('')
 const feed = ref<any[]>([])
+const soundOn = ref(true)
 
 const qrVisible = ref(false)
 const qrImage = ref('')
@@ -217,6 +220,7 @@ onMounted(() => {
   refreshTimer = window.setInterval(() => load(true), 20000)
   offSign = onRealtime('sign:new', (data: any) => {
     if (data?.taskId !== taskId) return
+    if (soundOn.value) playNoticeTone()
     if (data.studentName) {
       feed.value.unshift({
         name: data.studentName,
@@ -257,6 +261,11 @@ onBeforeUnmount(() => {
         <el-button v-if="canPasscode" @click="openPasscode"><el-icon><Key /></el-icon> 口令</el-button>
         <el-button v-if="canQr" type="primary" plain :disabled="!ongoing" @click="openQr"><el-icon><Grid /></el-icon> 二维码</el-button>
         <el-button v-if="ongoing" type="danger" plain @click="closeTask">提前关闭</el-button>
+        <el-tooltip :content="soundOn ? '关闭签到音效提醒' : '开启签到音效提醒'" placement="bottom">
+          <el-button circle :type="soundOn ? 'success' : 'info'" plain @click="soundOn = !soundOn">
+            <el-icon><component :is="soundOn ? 'Bell' : 'Mute'" /></el-icon>
+          </el-button>
+        </el-tooltip>
       </template>
     </PageHeader>
 
@@ -273,6 +282,7 @@ onBeforeUnmount(() => {
 
     <template v-else-if="task">
       <section class="panel monitor-hero" :class="task.taskStatus.toLowerCase()">
+        <Particles :count="18" color="var(--green)" />
         <div class="hero-left">
           <div class="row wrap" style="gap: 8px">
             <StatusTag :status="task.taskStatus" />
@@ -492,16 +502,16 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
-.monitor-hero { display: flex; justify-content: space-between; gap: 24px; align-items: center; padding: 20px 24px; border-left: 2px solid var(--green); }
+.monitor-hero { display: flex; justify-content: space-between; gap: 24px; align-items: center; padding: 20px 24px; border-left: 2px solid var(--green); overflow: hidden; }
 .monitor-hero.ended, .monitor-hero.closed { border-left-color: var(--muted); }
 .monitor-hero.not_started { border-left-color: var(--cyan); }
-.hero-left { flex: 1; min-width: 0; }
+.hero-left { flex: 1; min-width: 0; position: relative; z-index: 1; }
 .hero-count { display: flex; flex-direction: column; gap: 2px; margin: 14px 0 16px; }
 .hero-static { font-size: 28px; font-weight: 600; }
 .hero-stats { display: flex; gap: 30px; flex-wrap: wrap; }
 .hero-stats div { display: flex; flex-direction: column; gap: 0; }
 .hero-stats strong { font-size: 24px; font-weight: 600; }
-.hero-right { display: flex; flex-direction: column; align-items: center; gap: 12px; border-left: 1px solid var(--line); padding-left: 24px; }
+.hero-right { display: flex; flex-direction: column; align-items: center; gap: 12px; border-left: 1px solid var(--line); padding-left: 24px; position: relative; z-index: 1; }
 .hero-actions { display: flex; gap: 6px; }
 
 .filter-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }

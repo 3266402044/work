@@ -11,6 +11,8 @@ import StatusTag from '@/components/StatusTag.vue'
 import Countdown from '@/components/Countdown.vue'
 import EmptyState from '@/components/EmptyState.vue'
 import ProgressRing from '@/components/ProgressRing.vue'
+import Confetti from '@/components/Confetti.vue'
+import { playSuccessChime } from '@/utils/sound'
 
 const route = useRoute()
 const router = useRouter()
@@ -24,6 +26,7 @@ const activeMode = ref('')
 const passcode = ref('')
 const location = reactive<{ lon?: number; lat?: number; accuracy?: number }>({})
 const successRecord = ref<any>(null)
+const celebrate = ref(false)
 const leaveVisible = ref(false)
 const leaveForm = reactive({ reason: '', proofUrl: '' })
 const uploading = ref(false)
@@ -54,6 +57,9 @@ const doSign = async (payload: Record<string, any>) => {
     task.value = result.task
     successRecord.value = result.record
     ElMessage.success('签到成功')
+    celebrate.value = true
+    playSuccessChime()
+    window.setTimeout(() => (celebrate.value = false), 2800)
   } finally {
     signLoading.value = false
   }
@@ -398,6 +404,8 @@ onBeforeUnmount(() => off?.())
         <el-button type="primary" @click="submitLeave">提交申请</el-button>
       </template>
     </el-dialog>
+
+    <Confetti v-if="celebrate" />
   </div>
 </template>
 

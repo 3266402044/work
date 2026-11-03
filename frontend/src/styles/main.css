@@ -3,7 +3,7 @@
   --bg-deep: #070B16;
   --panel: #151C2D;
   --panel-2: #1A2236;
-  --panel-3: #101728;
+  --panel-3: rgba(255, 255, 255, 0.05);
   --line: rgba(148, 163, 184, 0.14);
   --line-strong: rgba(148, 163, 184, 0.26);
   --text: #E7EDF7;
@@ -18,6 +18,51 @@
   --radius-lg: 14px;
   --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
   --sans: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --stage-bg: #0A1120;
+  --sidebar-bg: linear-gradient(180deg, #0E1524, #0B1120);
+  --topbar-bg: rgba(11, 16, 32, 0.82);
+  --glass-bg: rgba(17, 24, 40, 0.9);
+  --login-dim-a: rgba(7, 11, 22, 0.72);
+  --login-dim-b: rgba(7, 11, 22, 0.95);
+  --panel-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+  --pg-a: rgba(255, 255, 255, 0.09);
+  --pg-b: rgba(255, 255, 255, 0.14);
+  --pg-c: rgba(255, 255, 255, 0.07);
+  --pg-line: rgba(255, 255, 255, 0.13);
+  --glass-input: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.14);
+}
+
+/* ============ 浅色主题 ============ */
+:root[data-theme='light'] {
+  --bg: #F3F6FB;
+  --bg-deep: #E9EFF7;
+  --panel: #FFFFFF;
+  --panel-2: #F7FAFD;
+  --panel-3: #EEF3F9;
+  --line: rgba(23, 43, 77, 0.10);
+  --line-strong: rgba(23, 43, 77, 0.20);
+  --text: #18263F;
+  --text-2: #45577A;
+  --muted: #7283A0;
+  --cyan: #0891B2;
+  --teal: #0D9488;
+  --green: #16A34A;
+  --amber: #D97706;
+  --coral: #DC2626;
+  --stage-bg: #EAF2FA;
+  --sidebar-bg: linear-gradient(180deg, #FFFFFF, #F1F5FA);
+  --topbar-bg: rgba(255, 255, 255, 0.82);
+  --glass-bg: rgba(255, 255, 255, 0.92);
+  --login-dim-a: rgba(255, 255, 255, 0.72);
+  --login-dim-b: rgba(240, 245, 251, 0.92);
+  --panel-shadow: 0 18px 40px rgba(23, 43, 77, 0.10);
+  --pg-a: rgba(255, 255, 255, 0.55);
+  --pg-b: rgba(255, 255, 255, 0.82);
+  --pg-c: rgba(255, 255, 255, 0.48);
+  --pg-line: rgba(23, 43, 77, 0.12);
+  --glass-input: rgba(23, 43, 77, 0.05);
+  --glass-border: rgba(23, 43, 77, 0.12);
 }
 
 * { box-sizing: border-box; }
@@ -26,7 +71,12 @@ html, body, #app { min-height: 100%; }
 
 body {
   margin: 0;
-  background: var(--bg);
+  background:
+    radial-gradient(120% 90% at 78% -10%, rgba(56, 180, 168, 0.14), transparent 55%),
+    radial-gradient(90% 80% at 6% 100%, rgba(18, 60, 74, 0.4), transparent 62%),
+    linear-gradient(160deg, rgba(6, 22, 30, 0.82) 0%, rgba(4, 18, 27, 0.92) 100%),
+    url('/login-bg.jpg') center 30% / cover no-repeat;
+  background-attachment: fixed;
   color: var(--text);
   font-family: var(--sans);
   font-size: 14px;
@@ -78,17 +128,38 @@ button { font-family: inherit; }
 .grid-main-side { grid-template-columns: minmax(0, 1.7fr) minmax(300px, 1fr); }
 
 .panel {
-  background: linear-gradient(180deg, rgba(26, 34, 54, 0.92), rgba(21, 28, 45, 0.94));
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
+  background: linear-gradient(180deg, var(--pg-a) 0%, var(--pg-b) 30%, var(--pg-c) 100%);
+  border: 1px solid var(--pg-line);
+  border-radius: 16px;
   padding: 20px;
   position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(20px) saturate(125%);
+  -webkit-backdrop-filter: blur(20px) saturate(125%);
+  transition: border-color 0.2s ease, box-shadow 0.25s ease;
+}
+.panel::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 38%; height: 100%;
+  background: linear-gradient(100deg, transparent 0%, rgba(255, 255, 255, 0.10) 50%, transparent 100%);
+  transform: translate3d(-160%, 0, 0) skewX(-18deg);
+  pointer-events: none;
+}
+.panel:hover { border-color: rgba(56, 221, 248, 0.32); box-shadow: var(--panel-shadow); }
+.panel:hover::after { animation: panelSheen 0.9s ease; }
+@keyframes panelSheen {
+  from { transform: translate3d(-160%, 0, 0) skewX(-18deg); }
+  to { transform: translate3d(280%, 0, 0) skewX(-18deg); }
 }
 
 .panel-flat {
-  background: var(--panel-3);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
+  background: var(--pg-c);
+  border: 1px solid var(--pg-line);
+  border-radius: 12px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
 
 .panel-head {
@@ -178,7 +249,7 @@ button { font-family: inherit; }
 .divider { height: 1px; background: var(--line); margin: 16px 0; }
 
 .hoverable { transition: border-color 0.18s ease, transform 0.18s ease, background 0.18s ease; }
-.hoverable:hover { border-color: var(--line-strong); background: rgba(26, 34, 54, 1); }
+.hoverable:hover { border-color: var(--line-strong); background: var(--panel-2); }
 
 .link { color: var(--cyan); cursor: pointer; }
 .link:hover { text-decoration: underline; }
@@ -216,6 +287,11 @@ button { font-family: inherit; }
 
 .fade-in { animation: fadeIn 0.35s ease both; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+/* ============ 路由转场 ============ */
+.route-fade-enter-active, .route-fade-leave-active { transition: opacity 0.18s ease, transform 0.18s ease; }
+.route-fade-enter-from { opacity: 0; transform: translateY(10px); }
+.route-fade-leave-to { opacity: 0; transform: translateY(-6px); }
 
 .pulse-dot {
   position: relative;
@@ -264,12 +340,28 @@ html.dark {
   --el-border-radius-base: 8px;
 }
 
+/* 浅色主题下的品牌主色（深色主色已在 html.dark 中定义） */
+:root[data-theme='light'] {
+  --el-color-primary: #0891B2;
+  --el-color-primary-light-3: #3BA8C4;
+  --el-color-primary-light-5: #6FC0D5;
+  --el-color-primary-light-7: #A5D8E6;
+  --el-color-primary-light-8: #C0E6F0;
+  --el-color-primary-light-9: #DBF1F7;
+  --el-color-primary-dark-2: #077089;
+  --el-color-success: #16A34A;
+  --el-color-warning: #D97706;
+  --el-color-danger: #DC2626;
+  --el-color-error: #DC2626;
+  --el-color-info: #7283A0;
+}
+
 .el-button { font-weight: 500; }
-.el-button--primary { color: #04121B; }
-.el-button--primary:hover, .el-button--primary:focus { color: #04121B; }
+html.dark .el-button--primary { color: #04121B; }
+html.dark .el-button--primary:hover, html.dark .el-button--primary:focus { color: #04121B; }
 .el-input__wrapper, .el-textarea__inner, .el-select__wrapper {
-  background-color: var(--panel-3) !important;
-  box-shadow: 0 0 0 1px var(--line) inset !important;
+  background-color: var(--glass-input) !important;
+  box-shadow: 0 0 0 1px var(--glass-border) inset !important;
 }
 .el-input__wrapper.is-focus, .el-select__wrapper.is-focused {
   box-shadow: 0 0 0 1px var(--cyan) inset !important;
@@ -278,20 +370,31 @@ html.dark {
 .el-table {
   --el-table-bg-color: transparent;
   --el-table-tr-bg-color: transparent;
-  --el-table-header-bg-color: #182135;
-  --el-table-header-text-color: #8B9AB5;
-  --el-table-text-color: #C9D4E6;
-  --el-table-border-color: rgba(148, 163, 184, 0.12);
+  --el-table-header-bg-color: var(--panel-3);
+  --el-table-header-text-color: var(--muted);
+  --el-table-text-color: var(--text-2);
+  --el-table-border-color: var(--line);
   --el-table-row-hover-bg-color: rgba(56, 221, 248, 0.05);
   background: transparent;
 }
 .el-table th.el-table__cell { font-weight: 500; font-size: 12px; letter-spacing: 0.03em; }
 .el-table .el-table__cell { padding: 10px 0; }
-.el-dialog { border-radius: 12px; border: 1px solid var(--line); background: var(--panel); }
+.el-dialog {
+  border-radius: 14px;
+  border: 1px solid var(--pg-line);
+  background: linear-gradient(180deg, var(--pg-b), var(--pg-a));
+  backdrop-filter: blur(26px) saturate(125%);
+  -webkit-backdrop-filter: blur(26px) saturate(125%);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.5);
+}
 .el-dialog__title { font-size: 16px; font-weight: 600; }
-.el-drawer { background: var(--panel); }
-.el-card { background: var(--panel); border-color: var(--line); }
-.el-message { background: var(--panel-2); border-color: var(--line); }
+.el-drawer {
+  background: linear-gradient(180deg, var(--pg-b), var(--pg-a));
+  backdrop-filter: blur(26px) saturate(125%);
+  -webkit-backdrop-filter: blur(26px) saturate(125%);
+}
+.el-card { background: var(--pg-a); border-color: var(--pg-line); backdrop-filter: blur(20px); }
+.el-message { background: linear-gradient(180deg, var(--pg-b), var(--pg-a)); border-color: var(--pg-line); backdrop-filter: blur(18px); }
 .el-message--error .el-message__content { color: #FFD5D5; }
 .el-pagination { --el-pagination-bg-color: transparent; --el-pagination-button-bg-color: transparent; }
 .el-pagination button, .el-pager li { background: transparent !important; }
@@ -309,7 +412,7 @@ html.dark {
 .el-switch.is-checked .el-switch__core { background: var(--teal); border-color: var(--teal); }
 .el-progress-bar__outer { background: rgba(148, 163, 184, 0.12); }
 .el-tag { border-radius: 5px; }
-.el-notification { background: var(--panel-2); border-color: var(--line); }
+.el-notification { background: linear-gradient(180deg, var(--pg-b), var(--pg-a)); border-color: var(--pg-line); backdrop-filter: blur(18px); }
 .el-upload-dragger { background: var(--panel-3); border-color: var(--line); }
 .el-upload-dragger:hover { border-color: var(--cyan); }
 
@@ -365,7 +468,7 @@ html.dark {
   background:
     radial-gradient(circle at 18% 12%, rgba(56, 221, 248, 0.12), transparent 60%),
     radial-gradient(circle at 78% 82%, rgba(45, 212, 191, 0.09), transparent 55%),
-    #0A1120;
+    var(--stage-bg);
   min-height: 360px;
 }
 .stage::before {
@@ -411,9 +514,9 @@ html.dark {
   padding: 24px;
   position: relative;
   background:
-    linear-gradient(180deg, rgba(7, 11, 22, 0.72), rgba(7, 11, 22, 0.95)),
+    linear-gradient(180deg, var(--login-dim-a), var(--login-dim-b)),
     url('/login-bg.jpg') center/cover no-repeat,
-    radial-gradient(circle at 20% 20%, #13233c, #070B16 70%);
+    var(--bg-deep);
 }
 .login-page::before {
   content: "";
@@ -430,7 +533,7 @@ html.dark {
   z-index: 1;
   width: 100%;
   max-width: 400px;
-  background: rgba(17, 24, 40, 0.9);
+  background: var(--glass-bg);
   border: 1px solid var(--line-strong);
   border-radius: 14px;
   padding: 32px 28px;

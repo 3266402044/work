@@ -84,7 +84,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: ${DB_USER:root}
     # ↓↓↓ 把你的 MySQL 密码填在冒号后面，替换掉 CHANGE_ME ↓↓↓
-    password: ${DB_PASSWORD:159357}
+    password: ${DB_PASSWORD:123456}
   sql:
     init:
       mode: never

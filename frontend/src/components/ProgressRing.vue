@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 const props = withDefaults(
   defineProps<{
@@ -17,6 +17,31 @@ const props = withDefaults(
 const radius = 54
 const circumference = 2 * Math.PI * radius
 const offset = computed(() => circumference * (1 - Math.min(100, Math.max(0, props.value)) / 100))
+
+// 数字滚动计数
+const display = ref(0)
+let raf = 0
+const animate = () => {
+  cancelAnimationFrame(raf)
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || document.hidden) {
+    display.value = props.value
+    return
+  }
+  const from = display.value
+  const to = props.value
+  const start = performance.now()
+  const duration = 600
+  const tick = (now: number) => {
+    const progress = Math.min(1, (now - start) / duration)
+    const eased = 1 - Math.pow(1 - progress, 3)
+    display.value = from + (to - from) * eased
+    if (progress < 1) raf = requestAnimationFrame(tick)
+  }
+  raf = requestAnimationFrame(tick)
+}
+onMounted(animate)
+watch(() => props.value, animate)
+onBeforeUnmount(() => cancelAnimationFrame(raf))
 </script>
 
 <template>
@@ -38,7 +63,7 @@ const offset = computed(() => circumference * (1 - Math.min(100, Math.max(0, pro
       />
     </svg>
     <div class="center">
-      <strong class="mono">{{ Math.round(value) }}<span class="pct">%</span></strong>
+      <strong class="mono">{{ Math.round(display) }}<span class="pct">%</span></strong>
       <span v-if="label" class="label">{{ label }}</span>
       <span v-if="sublabel" class="sub">{{ sublabel }}</span>
     </div>
